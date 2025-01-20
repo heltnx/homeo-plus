@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <title>Liste Tubes Homéopathiques</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Mes Tubes Homéopathiques</h1>
+            <button id="addListBtn" class="btn btn-primary">Nouvelle liste</button>
+        </header>
+
+        <div id="lists-container"></div>
+    </div>
+
+    <template id="list-template">
+        <div class="list">
+            <div class="list-header">
+                <div class="list-title">
+                    <h2></h2>
+                    <span class="tube-count"></span>
+                </div>
+                <div class="list-actions">
+                    <button class="btn btn-delete"><i class="icon-trash"></i></button>
+                </div>
+            </div>
+            <div class="list-content">
+                <input type="text" class="tube-search" placeholder="Rechercher un tube...">
+                <form class="tube-form">
+                    <input type="text" name="name" placeholder="Ajouter un tube" required>
+                    <input type="number" name="quantity" value="1" min="1">
+                    <input type="text" name="usage" placeholder="Utilité (optionnel)">
+                    <button type="submit" class="btn btn-add"><i class="icon-plus"></i></button>
+                </form>
+                <div class="tubes-list"></div>
+            </div>
+        </div>
+    </template>
+
+    <template id="tube-template">
+        <div class="tube">
+            <span class="tube-name"></span>
+            <span class="tube-quantity"></span>
+            <span class="tube-usage"></span>
+            <button class="btn btn-delete"><i class="icon-trash"></i></button>
+            <span class="remove-tube" style="cursor:pointer; color:red; margin-left:10px;">✖</span>
+        </div>
+    </template>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script type="module" src="app.js"></script>
+</body>
+
+</html>

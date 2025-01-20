@@ -1,0 +1,435 @@
+:root {
+    --apple-green: #8BC34A;
+    --apple-green-light: #DCEDC8;
+    --apple-green-dark: #689F38;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-500: #6B7280;
+    --gray-700: #374151;
+    --red-500: #EF4444;
+    --red-700: #B91C1C;
+    --soft-green: #D6F2B4;
+    --soft-green-alt: #EEF3E6;
+    --soft-blue: #DEEAF9;
+    --soft-blue-alt: #e5ecf5;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: var(--gray-50);
+    color: var(--gray-700);
+    line-height: 1.5;
+}
+
+.container {
+    max-width: 48rem;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    transition: background-color 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--apple-green);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--apple-green-dark);
+}
+
+.list {
+    background: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+}
+
+/* Styles spécifiques pour Sausset */
+.list[data-name*="sausset"] .tube:nth-child(odd) {
+    background-color: var(--soft-green);
+}
+
+.list[data-name*="sausset"] .tube:nth-child(even) {
+    background-color: var(--soft-green-alt);
+}
+
+.list[data-name*="sausset"] .list-header {
+    background-color: var(--apple-green-light);
+}
+
+.list[data-name*="sausset"] .tube-search,
+.list[data-name*="sausset"] .btn-add {
+    background-color: #e1ead6;
+}
+
+/* Styles spécifiques pour Campello */
+.list[data-name*="campello"] .tube:nth-child(odd) {
+    background-color: var(--soft-blue);
+}
+
+.list[data-name*="campello"] .tube:nth-child(even) {
+    background-color: var(--soft-blue-alt);
+}
+
+.list[data-name*="campello"] .list-header {
+    background-color: var(--soft-blue);
+}
+
+.list[data-name*="campello"] .tube-search,
+.list[data-name*="campello"] .btn-add {
+    background-color: var(--soft-blue-alt);
+}
+
+.list[data-name*="campello"] .btn-edit {
+    color: #0FA0CE;
+}
+
+.list[data-name*="campello"] .btn-edit:hover {
+    color: #0c8eb8;
+}
+
+.list-header {
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.list-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.list-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.list-title-input {
+    font-size: 1.25rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 0.25rem;
+    width: 100%;
+    max-width: 300px;
+}
+
+h2 {
+    cursor: pointer;
+}
+
+.list-content {
+    padding: 1rem;
+    display: none;
+}
+
+.list.expanded .list-content {
+    display: block;
+}
+
+.tube-search {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.tube-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.tube-form input {
+    padding: 0.5rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 0.25rem;
+    min-width: 80px;
+    font-size: 0.875rem;
+}
+
+.tubes-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.tube {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.tube.editing {
+    background-color: var(--gray-100);
+    padding: 0.25rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+}
+
+.tube.editing input,
+.tube.editing textarea {
+    padding: 0.5rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 0.25rem;
+    background: white;
+    font-size: 0.875rem;
+}
+
+.tube.editing .tube-name {
+    width: 200px;
+    resize: none;
+    overflow: hidden;
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 2.5rem;
+    font-family: inherit;
+}
+
+.tube.editing .tube-quantity {
+    width: 50px;
+    text-align: center;
+}
+
+.tube.editing .tube-usage {
+    flex: 1;
+    resize: none;
+    overflow: hidden;
+    white-space: pre-wrap;
+    word-break: break-word;
+    min-height: 2.5rem;
+    font-family: inherit;
+}
+
+.tube-name {
+    width: 200px;
+    font-weight: 500;
+    white-space: pre-wrap;
+    word-break: break-word;
+    flex-shrink: 0;
+}
+
+.tube-quantity {
+    width: 50px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+input[type="number"].tube-quantity {
+    width: 50px;
+    text-align: center;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.tube-usage {
+    flex: 1;
+    color: var(--gray-500);
+    min-width: 100px;
+    word-break: break-word;
+}
+
+.tube.editing .tube-name {
+    width: 200px;
+    height: auto;
+}
+
+.tube.editing .tube-quantity {
+    width: 50px;
+}
+
+@media (max-width: 640px) {
+    .tube-name,
+    .tube.editing .tube-name {
+        width: 150px;
+    }
+}
+
+.btn-edit {
+    color: var(--apple-green);
+    background: transparent;
+    font-size: 1.2em;
+}
+
+.btn-delete {
+    color: var(--red-500);
+    background: transparent;
+    font-size: 0.9em;
+}
+
+@media (max-width: 640px) {
+    .container {
+        margin: 1rem auto;
+        padding: 0 0.5rem;
+    }
+
+    h1 {
+        font-size: 1.25rem;
+    }
+
+    .icon-chevron {
+        display: none;
+    }
+
+    .list-content {
+        padding: 0.625rem 0;
+    }
+
+    .tube {
+        padding: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .tube-name {
+        min-width: 100px;
+    }
+
+    .tube-usage {
+        min-width: 80px;
+    }
+
+    .tube-form {
+        display: none;
+    }
+
+    .tube-form.expanded {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tube-form input {
+        width: 100%;
+    }
+
+    .add-tube-btn {
+        display: block;
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        background-color: var(--apple-green);
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+    }
+
+    .add-tube-btn:hover {
+        background-color: var(--apple-green-dark);
+    }
+
+    .tube .btn-edit,
+    .tube .btn-delete {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        align-items: flex-end;
+    }
+
+    .tube .btn-edit {
+        margin-bottom: 1.5rem;  /* Augmentation du padding bottom */
+        font-size: 1.4em;
+    }
+
+    .tube .btn-delete {
+        font-size: 1.1em;
+    }
+
+    .tube {
+        position: relative;
+        padding-right: 3rem;
+    }
+
+    .tube .btn-edit,
+    .tube .btn-delete {
+        position: absolute;
+        right: 0.5rem;
+    }
+
+    .tube .btn-edit {
+        top: 0.25rem;
+    }
+
+    .tube .btn-delete {
+        bottom: 0.25rem;
+    }
+}
+
+@media (min-width: 641px) {
+    .tube-form {
+        display: none;
+    }
+
+    .tube-form.expanded {
+        display: flex;
+    }
+
+    .add-tube-btn {
+        display: block;
+        width: 100%;
+        padding: 0.5rem;
+        margin-bottom: 1rem;
+        background-color: var(--apple-green);
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+    }
+
+    .add-tube-btn:hover {
+        background-color: var(--apple-green-dark);
+    }
+}
+
+.icon-edit::before { content: "✎"; font-size: 1.2em; }
+.icon-trash::before { content: "✕"; color: #ea384c; }
+.icon-plus::before { content: "+"; }
+.list.expanded .icon-chevron::before { content: "▲"; }
+.icon-check::before { content: "✓"; color: var(--apple-green); }
+
+/* Suppression des flèches du input number */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
