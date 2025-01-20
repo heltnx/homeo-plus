@@ -226,7 +226,7 @@ class TubeManager {
             const newQuantity = parseInt(currentEditingElement.querySelector('.tube-quantity').value);
             const newUsage = currentEditingElement.querySelector('.tube-usage').value;
 
-            if (newName && !isNaN(newQuantity) && newQuantity > 0) {
+            if (newName && !isNaN(newQuantity) && newQuantity >= 0) {
                 try {
                     await TubeService.updateTube(
                         this.currentEditingTubeId,
@@ -285,6 +285,7 @@ class TubeManager {
                 <span class="tube-name" role="button">${tube.name}</span>
                 <span class="tube-quantity" role="button">${tube.quantity}</span>
                 <span class="tube-usage" role="button">${tube.usage || ''}</span>
+                <button class="btn btn-delete"><i class="icon-trash"></i></button>
             `;
 
             // Ajouter les écouteurs pour l'édition au clic sur chaque champ
