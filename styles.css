@@ -276,6 +276,7 @@ input[type="number"].tube-quantity {
 }
 
 @media (max-width: 640px) {
+
     .tube-name,
     .tube.editing .tube-name {
         width: 150px;
@@ -363,7 +364,8 @@ input[type="number"].tube-quantity {
     }
 
     .tube .btn-edit {
-        margin-bottom: 1.5rem;  /* Augmentation du padding bottom */
+        margin-bottom: 1.5rem;
+        /* Augmentation du padding bottom */
         font-size: 1.4em;
     }
 
@@ -417,11 +419,24 @@ input[type="number"].tube-quantity {
     }
 }
 
-.icon-edit::before { content: "✎"; font-size: 1.2em; }
-.icon-trash::before { content: "✕"; color: #ea384c; }
-.icon-plus::before { content: "+"; }
-.list.expanded .icon-chevron::before { content: "▲"; }
-.icon-check::before { content: "✓"; color: var(--apple-green); }
+
+.icon-trash::before {
+    content: "✕";
+    color: #ea384c;
+}
+
+.icon-plus::before {
+    content: "+";
+}
+
+@media (max-width: 400px) {
+
+    .btn-delete,
+    .icon-trash {
+        display: none;
+    }
+
+}
 
 /* Suppression des flèches du input number */
 input[type="number"]::-webkit-inner-spin-button,
