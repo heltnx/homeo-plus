@@ -87,6 +87,11 @@ header {
     background-color: #e1ead6;
 }
 
+.list[data-name*="sausset"] .btn-add {
+    background-color: var(--apple-green);
+    color: white;
+}
+
 /* Styles spécifiques pour Campello */
 .list[data-name*="campello"] .tube:nth-child(odd) {
     background-color: var(--soft-blue);
@@ -111,6 +116,12 @@ header {
 
 .list[data-name*="campello"] .btn-edit:hover {
     color: #0c8eb8;
+}
+
+.list[data-name*="campello"] .add-tube-btn,
+.list[data-name*="campello"] .btn-add {
+    background-color: #0c8eb8;
+    color: white;
 }
 
 .list-header {
@@ -349,48 +360,50 @@ input[type="number"].tube-quantity {
         border: none;
         border-radius: 0.5rem;
         cursor: pointer;
+        font-size: 15px;
     }
+}
 
-    .add-tube-btn:hover {
-        background-color: var(--apple-green-dark);
-    }
+.add-tube-btn:hover {
+    background-color: var(--apple-green-dark);
+}
 
-    .tube .btn-edit,
-    .tube .btn-delete {
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-        align-items: flex-end;
-    }
+.tube .btn-edit,
+.tube .btn-delete {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-end;
+}
 
-    .tube .btn-edit {
-        margin-bottom: 1.5rem;
-        /* Augmentation du padding bottom */
-        font-size: 1.4em;
-    }
+.tube .btn-edit {
+    margin-bottom: 1.5rem;
+    /* Augmentation du padding bottom */
+    font-size: 1.4em;
+}
 
-    .tube .btn-delete {
-        font-size: 1.1em;
-    }
+.tube .btn-delete {
+    font-size: 1.1em;
+}
 
-    .tube {
-        position: relative;
-        padding-right: 3rem;
-    }
+.tube {
+    position: relative;
+    padding-right: 3rem;
+}
 
-    .tube .btn-edit,
-    .tube .btn-delete {
-        position: absolute;
-        right: 0.5rem;
-    }
+.tube .btn-edit,
+.tube .btn-delete {
+    position: absolute;
+    right: 0.5rem;
+}
 
-    .tube .btn-edit {
-        top: 0.25rem;
-    }
+.tube .btn-edit {
+    top: 0.25rem;
+}
 
-    .tube .btn-delete {
-        bottom: 0.25rem;
-    }
+.tube .btn-delete {
+    bottom: 0.25rem;
+}
 }
 
 @media (min-width: 641px) {
@@ -429,7 +442,7 @@ input[type="number"].tube-quantity {
     content: "+";
 }
 
-@media (max-width: 400px) {
+@media (max-width: 340px) {
 
     .btn-delete,
     .icon-trash {

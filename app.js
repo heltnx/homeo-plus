@@ -382,11 +382,13 @@ class TubeManager {
     }
 
     async deleteTube(tubeId) {
-        try {
-            await TubeService.deleteTube(tubeId);
-            await this.loadLists();
-        } catch (error) {
-            console.error('Erreur lors de la suppression du tube:', error);
+        if (confirm('Voulez-vous vraiment supprimer ce tube ?')) {
+            try {
+                await TubeService.deleteTube(tubeId);
+                await this.loadLists();
+            } catch (error) {
+                console.error('Erreur lors de la suppression du tube:', error);
+            }
         }
     }
 }
