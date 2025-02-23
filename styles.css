@@ -4,7 +4,7 @@
     --apple-green-dark: #689F38;
     --gray-50: #F9FAFB;
     --gray-100: #F3F4F6;
-    --gray-200: #E5E7EB;
+    --gray-200: #969696;
     --gray-500: #6B7280;
     --gray-700: #374151;
     --red-500: #EF4444;
@@ -12,7 +12,15 @@
     --soft-green: #D6F2B4;
     --soft-green-alt: #EEF3E6;
     --soft-blue: #DEEAF9;
-    --soft-blue-alt: #e5ecf5;
+    --soft-blue-alt: #edf1f7;
+    --soft-orange: #f2d9b4;
+    --soft-orange-alt: #f7ebc6;
+    --apple-orange: #FEC05F;
+    --apple-orange-light: #f6dda5;
+    --apple-red: #d6b8ed;
+    --apple-red-light: #e6c8ed;
+    --soft-red: #ded0fb;
+    --soft-red-alt: #f1e9ff;
 }
 
 * {
@@ -124,6 +132,65 @@ header {
     color: white;
 }
 
+/* Styles spécifiques pour france */
+.list[data-name*="france"] .tube:nth-child(odd) {
+    background-color: var(--soft-orange);
+}
+
+.list[data-name*="france"] .tube:nth-child(even) {
+    background-color: var(--soft-orange-alt);
+}
+
+.list[data-name*="france"] .list-header {
+    background-color: var(--apple-orange-light);
+}
+
+.list[data-name*="france"] .tube-search,
+.list[data-name*="france"] .btn-add {
+    background-color: #f7ebc6;
+}
+
+.list[data-name*="france"] .btn-add {
+    background-color: var(--apple-orange);
+    color: white;
+}
+
+.list[data-name*="france"] .add-tube-btn,
+.list[data-name*="france"] .btn-add {
+    background-color: var(--apple-orange);
+    color: #272525;
+}
+
+/* Styles spécifiques pour espagne */
+.list[data-name*="espagne"] .tube:nth-child(odd) {
+    background-color: var(--soft-red);
+}
+
+.list[data-name*="espagne"] .tube:nth-child(even) {
+    background-color: var(--soft-red-alt);
+}
+
+.list[data-name*="espagne"] .list-header {
+    background-color: var(--apple-red-light);
+}
+
+.list[data-name*="espagne"] .tube-search {
+    background-color: #e2daf5;
+}
+
+.list[data-name*="espagne"] .btn-add {
+    background-color: var(--apple-red);
+    color: white;
+}
+
+.list[data-name*="espagne"] .add-tube-btn,
+.list[data-name*="espagne"] .btn-add {
+    background-color: var(--apple-red);
+    color: #272525;
+}
+
+
+/*----------------------*/
 .list-header {
     padding: 1rem;
     display: flex;
@@ -161,6 +228,9 @@ h2 {
 .list-content {
     padding: 1rem;
     display: none;
+    padding-top: 0;
+    margin-top: -10px;
+
 }
 
 .list.expanded .list-content {
@@ -169,8 +239,8 @@ h2 {
 
 .tube-search {
     width: 100%;
-    padding: 0.5rem;
-    border: 1px solid var(--gray-200);
+    padding: 8px;
+    border: 2px solid var(--gray-200);
     border-radius: 0.25rem;
     margin-bottom: 1rem;
 }
@@ -284,6 +354,15 @@ input[type="number"].tube-quantity {
 
 .tube.editing .tube-quantity {
     width: 50px;
+}
+
+.btn-email {
+    position: relative;
+    top: -40px;
+    float: right;
+    right: 40px;
+    background: #fbfdb9;
+
 }
 
 @media (max-width: 640px) {
@@ -404,7 +483,7 @@ input[type="number"].tube-quantity {
 .tube .btn-delete {
     bottom: 0.25rem;
 }
-}
+
 
 @media (min-width: 641px) {
     .tube-form {
