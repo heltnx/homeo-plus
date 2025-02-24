@@ -1,3 +1,4 @@
+// ./js/tube-service.js
 import { supabase } from './supabase-client.js';
 
 export class TubeService {
@@ -14,7 +15,7 @@ export class TubeService {
     static async getTubes() {
         const { data: tubes, error: tubesError } = await supabase
             .from('tubes')
-            .select('*')
+            .select('*') // Sélectionne TOUS les champs, y compris 'esp'
             .order('name');
 
         if (tubesError) throw tubesError;
@@ -50,12 +51,13 @@ export class TubeService {
         if (error) throw error;
     }
 
-    static async addTube(listId, name, usage, quantity) {
+    static async addTube(listId, name, name_esp, usage, quantity) {
         const { error } = await supabase
             .from('tubes')
             .insert([{
                 list_id: listId,
                 name,
+                esp: name_esp || null, // Ajout du champ 'esp'
                 usage: usage || null,
                 quantity: parseInt(quantity)
             }]);
@@ -63,12 +65,13 @@ export class TubeService {
         if (error) throw error;
     }
 
-    static async updateTube(id, name, usage, quantity) {
-        console.log('Updating tube:', { id, name, usage, quantity });
+    static async updateTube(id, name, name_esp, usage, quantity) { // Ajout du champ name_esp
+        console.log('Updating tube:', { id, name, name_esp, usage, quantity });
         const { data, error } = await supabase
             .from('tubes')
             .update({
                 name,
+                esp: name_esp || null, // Ajout du champ 'esp'
                 usage: usage || null,
                 quantity: parseInt(quantity)
             })
@@ -79,7 +82,7 @@ export class TubeService {
             console.error('Error updating tube:', error);
             throw error;
         }
-        
+
         console.log('Update response:', data);
         return data;
     }

@@ -1,3 +1,5 @@
+// app.js (ou le fichier principal)
+
 import { TubeService } from './js/tube-service.js';
 import { ListManager } from './js/list-manager.js';
 
@@ -25,6 +27,9 @@ class TubeManager {
                 this.saveCurrentEditingTube();
             }
         });
+
+        this.addEmailButtons(); // Ajoute les boutons e-mail initialement
+        this.observeListChanges(); // Démarre l'observateur après avoir initialisé les boutons
     }
 
     setupEventListeners() {
@@ -37,7 +42,13 @@ class TubeManager {
             const lists = await TubeService.getLists();
             const tubes = await TubeService.getTubes();
             console.log('Données chargées:', { lists, tubes });
+
+            // Vérifier si les données tubes sont bien chargées
+            tubes.forEach(tube => {
+                console.log('Tube data:', tube); // Log chaque tube pour inspection
+            });
             this.renderLists(lists || [], tubes || []);
+            this.addEmailButtons(); // Ajoute les boutons e-mail après le rendu des listes
         } catch (error) {
             console.error('Erreur lors du chargement des données:', error);
         }
@@ -88,6 +99,9 @@ class TubeManager {
             const listManager = new ListManager(listElement, list, listTubes);
             this.listManagers.set(list.id, listManager);
         });
+
+        // Ajoute les boutons ici aussi, après le rendu initial
+        this.addEmailButtons();
     }
 
     createListElement(list) {
@@ -195,8 +209,6 @@ class TubeManager {
         });
     }
 
-
-
     renderTubes(listElement, tubes) {
         const tubesContainer = listElement.querySelector('.tubes-list');
         tubesContainer.innerHTML = '';
@@ -283,6 +295,7 @@ class TubeManager {
             tubeElement.dataset.tubeId = tube.id;
             tubeElement.innerHTML = `
                 <span class="tube-name" role="button">${tube.name}</span>
+                <span class="tube-esp" role="button" style="display: ${tube.esp ? 'inline' : 'none'};">${tube.esp || ''}</span>
                 <span class="tube-quantity" role="button">${tube.quantity}</span>
                 <span class="tube-usage" role="button">${tube.usage || ''}</span>
                 <button class="btn btn-delete"><i class="icon-trash"></i></button>
@@ -298,9 +311,9 @@ class TubeManager {
         }
 
         const deleteBtn = tubeElement.querySelector('.btn-delete');
-        if (deleteBtn && !isEditing) {  // Only add delete button listener in non-editing mode
+        if (deleteBtn && !isEditing) {
             deleteBtn.addEventListener('click', (e) => {
-                e.stopPropagation();  // Prevent event bubbling
+                e.stopPropagation();
                 this.deleteTube(tube.id);
             });
         }
@@ -346,6 +359,7 @@ class TubeManager {
 
     async addTube(listId, form) {
         const nameInput = form.querySelector('input[name="name"]');
+        const nameEspInput = form.querySelector('input[name="name_esp"]');
         const quantityInput = form.querySelector('input[name="quantity"]');
         const usageInput = form.querySelector('input[name="usage"]');
 
@@ -353,6 +367,7 @@ class TubeManager {
             await TubeService.addTube(
                 listId,
                 nameInput.value,
+                nameEspInput.value, // On passe le nom espagnol
                 usageInput.value,
                 quantityInput.value
             );
@@ -364,8 +379,9 @@ class TubeManager {
         }
     }
 
-    async editTube(tube, tubeElement) {
+    async editTube(tube, tubeElement) { // Ajout du champ name_esp
         const newName = prompt('Nouveau nom du tube:', tube.name);
+        const newNameEsp = prompt('Nouveau nom espagnol du tube:', tube.esp); // Nouvelle valeur
         if (!newName) return;
 
         const newQuantity = parseInt(prompt('Nouvelle quantité:', tube.quantity));
@@ -374,7 +390,7 @@ class TubeManager {
         const newUsage = prompt('Nouvelle utilité:', tube.usage || '');
 
         try {
-            await TubeService.updateTube(tube.id, newName, newUsage, newQuantity);
+            await TubeService.updateTube(tube.id, newName, newNameEsp, newUsage, newQuantity);
             await this.loadLists();
         } catch (error) {
             console.error('Erreur lors de la modification du tube:', error);
@@ -391,106 +407,107 @@ class TubeManager {
             }
         }
     }
+
+    // Ajout d'un bouton d'envoi par liste spécifique
+    addEmailButtons() {
+        document.querySelectorAll('.list').forEach(list => {
+            const listContent = list.querySelector('.list-content');
+            if (listContent && !listContent.querySelector('.btn-email')) { // Vérifie si le bouton existe déjà
+                const sendEmailBtn = document.createElement('button');
+                sendEmailBtn.textContent = 'Mail stock 0';
+                sendEmailBtn.className = 'btn btn-email';
+                listContent.prepend(sendEmailBtn); // Utilise prepend pour l'ajouter en premier
+
+                sendEmailBtn.addEventListener('click', (event) => {
+                    event.preventDefault(); // Empêche la navigation si nécessaire
+                    event.stopPropagation(); // Empêche la propagation aux parents
+
+                    console.log('Bouton cliqué pour la liste:', list.querySelector('h2').textContent);
+                    if (list.classList.contains('expanded')) { // Vérifie si la liste est ouverte
+                        this.sendEmailWithZeroQuantityTubes(list); // Utilise `this` pour accéder à la méthode
+                    }
+                });
+            }
+        });
+    }
+
+    observeListChanges() {
+        if (!this.listsContainer) {
+            console.warn('lists-container not found, cannot observe list changes.');
+            return;
+        }
+
+        const observer = new MutationObserver(mutations => {
+            mutations.forEach(mutation => {
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach(node => {
+                        if (node.classList && node.classList.contains('list')) {
+                            console.log('Nouvelle liste détectée, ajout des boutons e-mail');
+                            this.addEmailButtons(); // Utilise `this` pour accéder à la méthode
+                        }
+                    });
+                }
+            });
+        });
+
+        observer.observe(this.listsContainer, { childList: true, subtree: true });
+    }
+
+    sendEmailWithZeroQuantityTubes(targetList) {
+        // Récupérer les tubes avec quantité 0 dans la liste sélectionnée
+        const tubes = targetList.querySelectorAll('.tube');
+        const zeroQuantityTubes = [];
+        const listName = targetList.querySelector('h2').textContent;
+
+        tubes.forEach(tubeElement => {
+
+            const quantityElement = tubeElement.querySelector('.tube-quantity');
+            let nameElement;
+            let tubeId = tubeElement.dataset.tubeId
+            let tube;
+
+            for (const listManager of this.listManagers.values()) {
+                if (listManager.tubes) {
+                    tube = listManager.tubes.find(tube => tube.id === tubeId);
+                    if (tube) {
+                        break;
+                    }
+                }
+            }
+
+
+            if (listName.toLowerCase().includes("just espagne")) {
+                nameElement = tube.esp; // Sélectionne le nom ESP, pas l'élément
+            } else {
+                nameElement = tube.name; // Sélectionne le nom par défaut
+            }
+
+
+            if (quantityElement) { // Vérifier si les éléments existent
+                const quantity = parseInt(quantityElement.textContent, 10);
+                const name = nameElement;
+
+                if (quantity === 0) {
+                    zeroQuantityTubes.push(`${quantity}  ${name}`);
+                }
+            }
+        });
+
+        if (zeroQuantityTubes.length === 0) {
+            alert('Aucun tube avec quantité 0 trouvé dans cette liste.');
+            return;
+        }
+
+        // Construire le message de l'e-mail
+        const subject = encodeURIComponent(`Commande ${listName}`);
+        const body = encodeURIComponent('Livraison à Mme Winckel: carrer San Bartolomeu 77 - 5e izquierda - 03560 El Campello - Provincia de Alicante":\n\n' + zeroQuantityTubes.join('\n'));
+
+        // Ouvrir le client de messagerie
+        window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Initialisation de TubeManager...');
     new TubeManager();
 });
-
-// Ajout d'un bouton d'envoi par liste spécifique
-function addEmailButtons() {
-    document.querySelectorAll('.list').forEach(list => {
-        const listContent = list.querySelector('.list-content');
-        if (listContent && !listContent.querySelector('.btn-email')) { // Vérifie si le bouton existe déjà
-            const sendEmailBtn = document.createElement('button');
-            sendEmailBtn.textContent = 'Mail stock 0';
-            sendEmailBtn.className = 'btn btn-email';
-            listContent.prepend(sendEmailBtn); // Utilise prepend pour l'ajouter en premier
-
-            sendEmailBtn.addEventListener('click', function (event) {
-                event.preventDefault(); // Empêche la navigation si nécessaire
-                event.stopPropagation(); // Empêche la propagation aux parents
-
-                console.log('Bouton cliqué pour la liste:', list.querySelector('h2').textContent);
-                if (list.classList.contains('expanded')) { // Vérifie si la liste est ouverte
-                    sendEmailWithZeroQuantityTubes(list);
-                }
-            });
-        }
-    });
-}
-
-function observeListChanges() {
-    const listsContainer = document.getElementById('lists-container');
-    if (!listsContainer) {
-        console.warn('lists-container not found, cannot observe list changes.');
-        return;
-    }
-
-    const observer = new MutationObserver(mutations => {
-        mutations.forEach(mutation => {
-            if (mutation.type === 'childList') {
-                mutation.addedNodes.forEach(node => {
-                    if (node.classList && node.classList.contains('list')) {
-                        console.log('Nouvelle liste détectée, ajout des boutons e-mail');
-                        addEmailButtons(); // Ajoute les boutons uniquement si une nouvelle liste est ajoutée
-                    }
-                });
-            }
-        });
-    });
-
-    observer.observe(listsContainer, { childList: true, subtree: true });
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Attendre que lists-container soit disponible
-    const listsContainerInterval = setInterval(() => {
-        const listsContainer = document.getElementById('lists-container');
-        if (listsContainer) {
-            clearInterval(listsContainerInterval); // Arrête l'intervalle
-
-            addEmailButtons(); // Ajoute les boutons e-mail initialement
-
-            observeListChanges(); // Démarre l'observateur après avoir initialisé les boutons
-        } else {
-            console.log("lists-container not yet available, waiting...");
-        }
-    }, 50); // Vérifie toutes les 50ms
-});
-
-
-function sendEmailWithZeroQuantityTubes(targetList) {
-    // Récupérer les tubes avec quantité 0 dans la liste sélectionnée
-    const tubes = targetList.querySelectorAll('.tube');
-    const zeroQuantityTubes = [];
-
-    tubes.forEach(tube => {
-        const quantityElement = tube.querySelector('.tube-quantity');
-        const nameElement = tube.querySelector('.tube-name');
-
-        if (quantityElement && nameElement) { // Vérifier si les éléments existent
-            const quantity = parseInt(quantityElement.textContent, 10);
-            const name = nameElement.textContent;
-            if (quantity === 0) {
-                zeroQuantityTubes.push(`${quantity}  ${name}`);
-            }
-        }
-    });
-
-    if (zeroQuantityTubes.length === 0) {
-        alert('Aucun tube avec quantité 0 trouvé dans cette liste.');
-        return;
-    }
-
-    // Construire le message de l'e-mail
-    const listName = targetList.querySelector('h2').textContent;
-    const subject = encodeURIComponent(`Commande ${listName}`);
-    const body = encodeURIComponent('Livraison à Mme Winckel: carrer San Bartolomeu 77 - 5e izquierda - 03560 El Campello - Provincia de Alicante":\n\n' + zeroQuantityTubes.join('\n'));
-
-    // Ouvrir le client de messagerie
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
-}
-/*    const body = encodeURIComponent('Livraison à Mme Winckel: carrer San Bartolomeu 77 - 5e izquierda - 03560 El Campello - Provincia de Alicante":\n' + zeroQuantityTubes.join('\n'));
-*/

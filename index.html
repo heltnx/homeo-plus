@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
 
-<!DOCTYPE html>
-<html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,6 +34,7 @@
                 <input type="text" class="tube-search" placeholder="Rechercher un tube...">
                 <form class="tube-form">
                     <input type="text" name="name" placeholder="Ajouter un tube" required>
+                    <input type="text" name="name_esp" placeholder="Nom en espagnol (optionnel)" style="display: none;">
                     <input type="number" name="quantity" value="1" min="1">
                     <input type="text" name="usage" placeholder="Utilité (optionnel)">
                     <button type="submit" class="btn btn-add">Ajouter</button>
@@ -49,6 +47,7 @@
     <template id="tube-template">
         <div class="tube">
             <span class="tube-name"></span>
+            <span class="tube-esp" style="display: none;"></span>
             <span class="tube-quantity"></span>
             <span class="tube-usage"></span>
             <button class="btn btn-delete"><i class="icon-trash"></i></button>
