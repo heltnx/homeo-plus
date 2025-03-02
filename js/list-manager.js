@@ -1,3 +1,5 @@
+// ./js/list-manager.js
+
 export class ListManager {
     constructor(listElement, list, tubes) {
         this.listElement = listElement;
@@ -18,16 +20,16 @@ export class ListManager {
     filterTubes() {
         const tubesList = this.listElement.querySelector('.tubes-list');
         const tubes = tubesList.children;
-        
+
         Array.from(tubes).forEach(tube => {
             const name = tube.querySelector('.tube-name').textContent.toLowerCase();
             const usage = tube.querySelector('.tube-usage').textContent.toLowerCase();
             const quantity = tube.querySelector('.tube-quantity').textContent;
-            
-            const matches = name.includes(this.searchTerm) || 
-                           usage.includes(this.searchTerm) || 
-                           quantity.includes(this.searchTerm);
-            
+
+            const matches = name.includes(this.searchTerm) ||
+                usage.includes(this.searchTerm) ||
+                quantity.includes(this.searchTerm);
+
             tube.style.display = matches ? '' : 'none';
         });
     }

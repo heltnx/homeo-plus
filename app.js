@@ -452,55 +452,50 @@ class TubeManager {
 
         observer.observe(this.listsContainer, { childList: true, subtree: true });
     }
-
     sendEmailWithZeroQuantityTubes(targetList) {
-        // Récupérer les tubes avec quantité 0 dans la liste sélectionnée
-        const tubes = targetList.querySelectorAll('.tube');
-        const zeroQuantityTubes = [];
         const listName = targetList.querySelector('h2').textContent;
+        const tubesACommander = [];
+        const targetListId = targetList.dataset.listId; // Récupérer l'ID de la liste cliquée
 
-        tubes.forEach(tubeElement => {
+        console.log("targetList:", targetList); // AJOUTEZ CETTE LIGNE
+        console.log("targetListId:", targetListId); // AJOUTEZ CETTE LIGNE
 
-            const quantityElement = tubeElement.querySelector('.tube-quantity');
-            let nameElement;
-            let tubeId = tubeElement.dataset.tubeId
-            let tube;
-
-            for (const listManager of this.listManagers.values()) {
-                if (listManager.tubes) {
-                    tube = listManager.tubes.find(tube => tube.id === tubeId);
-                    if (tube) {
-                        break;
-                    }
-                }
+        // Trouver le listManager correspondant à la targetList
+        let listManagerPourCetteListe = null;
+        for (const listManager of this.listManagers.values()) {
+            console.log("listManager.list:", listManager.list); // AJOUTEZ CETTE LIGNE
+            if (listManager.list.id === targetListId) {  // Comparaison des ID
+                listManagerPourCetteListe = listManager;
+                break;
             }
+        }
 
+        if (!listManagerPourCetteListe) {
+            console.warn("Aucun listManager trouvé pour cette liste:", listName);
+            return;
+        }
 
-            if (listName.toLowerCase().includes("just espagne")) {
-                nameElement = tube.esp; // Sélectionne le nom ESP, pas l'élément
-            } else {
-                nameElement = tube.name; // Sélectionne le nom par défaut
-            }
+        // Filtrer les tubes de CETTE liste
+        listManagerPourCetteListe.tubes.forEach(tube => {
+            if (tube.quantity < tube.stock_mini) {
+                const quantiteACommander = tube.stock_mini - tube.quantity;
+                let nomTube = listName.toLowerCase().includes("just espagne") ? tube.esp : tube.name;
 
-
-            if (quantityElement) { // Vérifier si les éléments existent
-                const quantity = parseInt(quantityElement.textContent, 10);
-                const name = nameElement;
-
-                if (quantity === 0) {
-                    zeroQuantityTubes.push(`${quantity}  ${name}`);
-                }
+                tubesACommander.push(`${quantiteACommander} x ${nomTube}`);
             }
         });
 
-        if (zeroQuantityTubes.length === 0) {
-            alert('Aucun tube avec quantité 0 trouvé dans cette liste.');
+        if (tubesACommander.length === 0) {
+            alert('Aucun tube à commander dans cette liste.');
             return;
         }
 
         // Construire le message de l'e-mail
         const subject = encodeURIComponent(`Commande ${listName}`);
-        const body = encodeURIComponent('Livraison à Mme Winckel: carrer San Bartolomeu 77 - 5e izquierda - 03560 El Campello - Provincia de Alicante":\n\n' + zeroQuantityTubes.join('\n'));
+        const body = encodeURIComponent(
+            'Livraison à Mme Winckel: carrer San Bartolomeu 77 - 5e izquierda - 03560 El Campello - Provincia de Alicante":\n\n' +
+            tubesACommander.join('\n')
+        );
 
         // Ouvrir le client de messagerie
         window.location.href = `mailto:?subject=${subject}&body=${body}`;
