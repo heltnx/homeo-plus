@@ -1,4 +1,4 @@
-// app.js (ou le fichier principal)
+// app.js
 
 import { TubeService } from './js/tube-service.js';
 import { ListManager } from './js/list-manager.js';
@@ -27,7 +27,6 @@ class TubeManager {
                 this.saveCurrentEditingTube();
             }
         });
-
         this.addEmailButtons(); // Ajoute les boutons e-mail initialement
         this.observeListChanges(); // Démarre l'observateur après avoir initialisé les boutons
     }
@@ -237,14 +236,17 @@ class TubeManager {
             const newName = currentEditingElement.querySelector('.tube-name').value;
             const newQuantity = parseInt(currentEditingElement.querySelector('.tube-quantity').value);
             const newUsage = currentEditingElement.querySelector('.tube-usage').value;
+            const newStockMini = parseInt(currentEditingElement.querySelector('.stock_mini').value);
 
             if (newName && !isNaN(newQuantity) && newQuantity >= 0) {
                 try {
                     await TubeService.updateTube(
                         this.currentEditingTubeId,
                         newName,
+                        null,
                         newUsage,
-                        newQuantity
+                        newQuantity,
+                        newStockMini,
                     );
                     this.currentEditingTubeId = null;
                     await this.loadLists();
@@ -269,6 +271,7 @@ class TubeManager {
                 <textarea class="tube-name" rows="1">${tube.name}</textarea>
                 <input type="number" class="tube-quantity" value="${tube.quantity}" min="1">
                 <textarea class="tube-usage" rows="1">${tube.usage || ''}</textarea>
+                <input type="number" class="stock_mini" value="${tube.stock_mini}" min="0">
             `;
 
             // Ajuster automatiquement la hauteur des textareas
@@ -295,9 +298,9 @@ class TubeManager {
             tubeElement.dataset.tubeId = tube.id;
             tubeElement.innerHTML = `
                 <span class="tube-name" role="button">${tube.name}</span>
-                <span class="tube-esp" role="button" style="display: ${tube.esp ? 'inline' : 'none'};">${tube.esp || ''}</span>
                 <span class="tube-quantity" role="button">${tube.quantity}</span>
                 <span class="tube-usage" role="button">${tube.usage || ''}</span>
+                <span class="stock_mini" role="button">${tube.stock_mini || ''}</span>
                 <button class="btn btn-delete"><i class="icon-trash"></i></button>
             `;
 
@@ -359,19 +362,18 @@ class TubeManager {
 
     async addTube(listId, form) {
         const nameInput = form.querySelector('input[name="name"]');
-        const nameEspInput = form.querySelector('input[name="name_esp"]');
         const quantityInput = form.querySelector('input[name="quantity"]');
         const usageInput = form.querySelector('input[name="usage"]');
-        const stockMiniInput = form.querySelector('input[name="stock_mini"]'); // Nouveau champ
+        const stockMiniInput = form.querySelector('input[name="stock_mini"]');
 
         try {
             await TubeService.addTube(
                 listId,
                 nameInput.value,
-                nameEspInput.value,
+                null,
                 usageInput.value,
                 quantityInput.value,
-                stockMiniInput.value // Ajout du champ stockMini
+                stockMiniInput.value
             );
             form.reset();
             quantityInput.value = "1";
@@ -381,21 +383,18 @@ class TubeManager {
         }
     }
 
-    async editTube(tube, tubeElement) { // Ajout du champ name_esp
+    async editTube(tube, tubeElement) {
         const newName = prompt('Nouveau nom du tube:', tube.name);
-        const newNameEsp = prompt('Nouveau nom espagnol du tube:', tube.esp); // Nouvelle valeur
         if (!newName) return;
 
         const newQuantity = parseInt(prompt('Nouvelle quantité:', tube.quantity));
         if (isNaN(newQuantity) || newQuantity < 1) return;
 
-        const newStockMini = parseInt(prompt('Nouveau stock mini:', tube.stock_mini));
-        if (isNaN(newStockMini)) return;
-
         const newUsage = prompt('Nouvelle utilité:', tube.usage || '');
+        const newStockMini = prompt('Nouveau stock mini:', tube.stock_mini);
 
         try {
-            await TubeService.updateTube(tube.id, newName, newNameEsp, newUsage, newQuantity, newStockMini);
+            await TubeService.updateTube(tube.id, newName, null, newUsage, newQuantity, newStockMini);
             await this.loadLists();
         } catch (error) {
             console.error('Erreur lors de la modification du tube:', error);
@@ -412,7 +411,6 @@ class TubeManager {
             }
         }
     }
-
     // Ajout d'un bouton d'envoi par liste spécifique
     addEmailButtons() {
         document.querySelectorAll('.list').forEach(list => {
@@ -424,7 +422,7 @@ class TubeManager {
                 listContent.prepend(sendEmailBtn); // Utilise prepend pour l'ajouter en premier
 
                 sendEmailBtn.addEventListener('click', (event) => {
-                    event.preventDefault(); // Empêche la propagation si nécessaire
+                    event.preventDefault(); // Empêche la navigation si nécessaire
                     event.stopPropagation(); // Empêche la propagation aux parents
 
                     console.log('Bouton cliqué pour la liste:', list.querySelector('h2').textContent);
