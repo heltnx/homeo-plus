@@ -362,14 +362,16 @@ class TubeManager {
         const nameEspInput = form.querySelector('input[name="name_esp"]');
         const quantityInput = form.querySelector('input[name="quantity"]');
         const usageInput = form.querySelector('input[name="usage"]');
+        const stockMiniInput = form.querySelector('input[name="stock_mini"]'); // Nouveau champ
 
         try {
             await TubeService.addTube(
                 listId,
                 nameInput.value,
-                nameEspInput.value, // On passe le nom espagnol
+                nameEspInput.value,
                 usageInput.value,
-                quantityInput.value
+                quantityInput.value,
+                stockMiniInput.value // Ajout du champ stockMini
             );
             form.reset();
             quantityInput.value = "1";
@@ -387,10 +389,13 @@ class TubeManager {
         const newQuantity = parseInt(prompt('Nouvelle quantité:', tube.quantity));
         if (isNaN(newQuantity) || newQuantity < 1) return;
 
+        const newStockMini = parseInt(prompt('Nouveau stock mini:', tube.stock_mini));
+        if (isNaN(newStockMini)) return;
+
         const newUsage = prompt('Nouvelle utilité:', tube.usage || '');
 
         try {
-            await TubeService.updateTube(tube.id, newName, newNameEsp, newUsage, newQuantity);
+            await TubeService.updateTube(tube.id, newName, newNameEsp, newUsage, newQuantity, newStockMini);
             await this.loadLists();
         } catch (error) {
             console.error('Erreur lors de la modification du tube:', error);
@@ -419,7 +424,7 @@ class TubeManager {
                 listContent.prepend(sendEmailBtn); // Utilise prepend pour l'ajouter en premier
 
                 sendEmailBtn.addEventListener('click', (event) => {
-                    event.preventDefault(); // Empêche la navigation si nécessaire
+                    event.preventDefault(); // Empêche la propagation si nécessaire
                     event.stopPropagation(); // Empêche la propagation aux parents
 
                     console.log('Bouton cliqué pour la liste:', list.querySelector('h2').textContent);
@@ -457,13 +462,9 @@ class TubeManager {
         const tubesACommander = [];
         const targetListId = targetList.dataset.listId; // Récupérer l'ID de la liste cliquée
 
-        console.log("targetList:", targetList); // AJOUTEZ CETTE LIGNE
-        console.log("targetListId:", targetListId); // AJOUTEZ CETTE LIGNE
-
         // Trouver le listManager correspondant à la targetList
         let listManagerPourCetteListe = null;
         for (const listManager of this.listManagers.values()) {
-            console.log("listManager.list:", listManager.list); // AJOUTEZ CETTE LIGNE
             if (listManager.list.id === targetListId) {  // Comparaison des ID
                 listManagerPourCetteListe = listManager;
                 break;

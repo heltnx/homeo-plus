@@ -540,3 +540,12 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
     -moz-appearance: textfield;
 }
+
+.short-input {
+    width: 50px;
+    /* Ajustez la valeur selon vos besoins */
+    padding: 5px;
+    /* Pour un aspect visuel agréable */
+    box-sizing: border-box;
+    /* Inclut le padding dans la largeur totale */
+}

@@ -35,8 +35,10 @@
                 <form class="tube-form">
                     <input type="text" name="name" placeholder="Ajouter un tube" required>
                     <input type="text" name="name_esp" placeholder="Nom en espagnol (optionnel)" style="display: none;">
-                    <input type="number" name="quantity" value="1" min="1">
+                    <input type="number" name="quantity" value="1" min="1" class="short-input">
                     <input type="text" name="usage" placeholder="Utilité (optionnel)">
+                    <input type="number" name="stock_mini" min="0" placeholder="Stock mini" class="short-input"
+                        required>
                     <button type="submit" class="btn btn-add">Ajouter</button>
                 </form>
                 <div class="tubes-list"></div>

@@ -51,29 +51,31 @@ export class TubeService {
         if (error) throw error;
     }
 
-    static async addTube(listId, name, name_esp, usage, quantity) {
+    static async addTube(listId, name, name_esp, usage, quantity, stockMini) {  // Ajout du paramètre stockMini
         const { error } = await supabase
             .from('tubes')
             .insert([{
                 list_id: listId,
                 name,
-                esp: name_esp || null, // Ajout du champ 'esp'
+                esp: name_esp || null,
                 usage: usage || null,
-                quantity: parseInt(quantity)
+                quantity: parseInt(quantity),
+                stock_mini: parseInt(stockMini) || 0  // Ajout de stock_mini
             }]);
 
         if (error) throw error;
     }
 
-    static async updateTube(id, name, name_esp, usage, quantity) { // Ajout du champ name_esp
-        console.log('Updating tube:', { id, name, name_esp, usage, quantity });
+    static async updateTube(id, name, name_esp, usage, quantity, stockMini) { // Ajout du paramètre stockMini
+        console.log('Updating tube:', { id, name, name_esp, usage, quantity, stockMini });
         const { data, error } = await supabase
             .from('tubes')
             .update({
                 name,
-                esp: name_esp || null, // Ajout du champ 'esp'
+                esp: name_esp || null,
                 usage: usage || null,
-                quantity: parseInt(quantity)
+                quantity: parseInt(quantity),
+                stock_mini: parseInt(stockMini) // Ajout de stock_mini
             })
             .eq('id', id)
             .select();
