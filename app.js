@@ -480,7 +480,9 @@ class TubeManager {
                 const quantiteACommander = tube.stock_mini - tube.quantity;
                 let nomTube = listName.toLowerCase().includes("just espagne") ? tube.esp : tube.name;
 
-                tubesACommander.push(`${quantiteACommander} x ${nomTube}`);
+                // Ajout de la quantité en stock (en rouge)
+                const stockQuantity = `(${tube.quantity})`;
+                tubesACommander.push(`${stockQuantity}     ${quantiteACommander}  ${nomTube}`);
             }
         });
 
