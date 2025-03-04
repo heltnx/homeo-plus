@@ -417,7 +417,7 @@ class TubeManager {
             const listContent = list.querySelector('.list-content');
             if (listContent && !listContent.querySelector('.btn-email')) { // Vérifie si le bouton existe déjà
                 const sendEmailBtn = document.createElement('button');
-                sendEmailBtn.textContent = 'Mail stock 0';
+                sendEmailBtn.textContent = 'Mail Commande';
                 sendEmailBtn.className = 'btn btn-email';
                 listContent.prepend(sendEmailBtn); // Utilise prepend pour l'ajouter en premier
 
